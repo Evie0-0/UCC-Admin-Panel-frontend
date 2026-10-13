@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UCC Admin | E-Services</title>
+	<link rel="icon" type="image/png" href="assets/images/ucc-LOGO.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="assets/css/eServices.css">
+</head>
+<body data-page-title="E-Services">
+	<div class="dashboard-layout">
+		<div id="sidebar-container"></div>
+		<main class="main-content">
+			<div id="header-container"></div>
+			<section class="services-admin">
+				<div class="services-page-heading">
+					<div>
+						<p>Manage the online services and external resources available to the UCC community.</p>
+					</div>
+				</div>
+				<div class="services-toolbar">
+					<div class="services-tools-left">
+						<div class="services-search">
+							<i data-lucide="search"></i>
+							<input type="text" id="serviceSearch" placeholder="Search e-services..." aria-label="Search e-services">
+						</div>
+						<select id="serviceStatusFilter" aria-label="Filter by status">
+							<option value="all">All statuses</option>
+							<option value="Active">Active</option>
+							<option value="Inactive">Inactive</option>
+						</select>
+						<select id="serviceSort" aria-label="Order e-services">
+							<option value="name-asc">Name A–Z</option>
+							<option value="name-desc">Name Z–A</option>
+							<option value="newest">Newest created</option>
+							<option value="oldest">Oldest created</option>
+						</select>
+					</div>
+					<button class="service-add-btn" type="button" id="addServiceBtn">
+						<i data-lucide="plus"></i> Add E-Service
+					</button>
+				</div>
+				<div class="services-table-card">
+					<div class="services-table-heading">
+						<h3>E-Services</h3>
+						<span id="serviceCount">0 services</span>
+					</div>
+					<div class="services-table-wrap">
+						<table class="services-table">
+							<thead>
+								<tr>
+									<th>Service</th>
+									<th>Description</th>
+									<th>Status</th>
+									<th>Link</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody id="servicesTableBody"></tbody>
+						</table>
+					</div>
+					<p class="services-end-message" id="servicesEndMessage" hidden>— No more items —</p>
+					<div class="services-pagination" id="servicesPagination" aria-label="E-services pagination"></div>
+				</div>
+			</section>
+		</main>
+	</div>
+	<div class="service-modal" id="serviceModal" aria-hidden="true">
+		<div class="service-modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+			<div class="service-modal-header">
+				<div>
+					<h3 id="modalTitle">Add E-Service</h3>
+					<p id="modalSubtitle">Enter the information for this e-service.</p>
+				</div>
+				<button class="modal-close" type="button" id="modalClose" aria-label="Close modal">
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<form id="serviceForm">
+				<div class="form-group">
+					<label for="serviceLogo">Service Logo</label>
+					<div class="logo-upload-box">
+						<div class="logo-preview" id="logoPreviewContainer">
+							<i data-lucide="globe" id="defaultLogoIcon"></i>
+							<img id="serviceLogoPreview" src="" alt="Service logo preview" hidden>
+						</div>
+						<div class="logo-upload-controls">
+							<input type="file" id="serviceLogo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+							<label class="choose-photo-btn post-btn post-btn-ghost" for="serviceLogo">
+								<i data-lucide="upload"></i>
+								Choose Photo
+							</label>
+							<button type="button" class="remove-logo-btn post-btn post-btn-danger" id="removeServiceLogo" aria-label="Remove selected image" title="Remove Photo" hidden>
+								<i data-lucide="x"></i>
+								<span>Remove Photo</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="serviceName">Service Name</label>
+					<input type="text" id="serviceName" placeholder="Enter service name" required>
+				</div>
+				<div class="form-group">
+					<label for="serviceStatus">Status</label>
+					<select id="serviceStatus" required>
+						<option value="Active">Active</option>
+						<option value="Inactive">Inactive</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="serviceDescription">Description</label>
+					<textarea id="serviceDescription" rows="4" placeholder="Enter service description" required></textarea>
+				</div>
+				<div class="form-group">
+					<label for="serviceUrl">Website URL</label>
+					<input type="url" id="serviceUrl" placeholder="https://example.com">
+				</div>
+			</form>
+			<div class="modal-footer-row">
+				<button type="button" class="modal-cancel" id="modalCancel">Cancel</button>
+				<div class="modal-actions form-actions form-actions-right">
+					<button type="button" class="modal-preview-btn" id="previewServiceBtn">
+						<i data-lucide="eye"></i> Preview
+					</button>
+					<button type="submit" class="modal-save" form="serviceForm">
+						<i data-lucide="save"></i> Save Service
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="service-preview-modal" id="servicePreviewModal" aria-hidden="true">
+		<div class="service-preview-box" role="dialog" aria-modal="true" aria-labelledby="servicePreviewTitle">
+			<div class="service-preview-header">
+				<div>
+					<h3 id="servicePreviewTitle">E-Service Preview</h3>
+				</div>
+				<button type="button" class="modal-close" id="closeServicePreview" aria-label="Close preview">
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<div class="service-preview-content">
+				<article class="service-card preview-service-card">
+					<div class="service-card-top">
+						<div class="service-icon" id="previewServiceIcon">
+							<i data-lucide="globe" id="previewDefaultIcon"></i>
+							<img id="previewServiceLogo" src="" alt="Service logo" hidden>
+						</div>
+					</div>
+					<div class="service-card-content">
+						<h3 id="previewServiceName">Service Name</h3>
+						<p id="previewServiceDescription">Service description will appear here.</p>
+					</div>
+					<div class="service-card-footer">
+						<a href="#" id="previewServiceLink" target="_blank" rel="noopener noreferrer">
+							Visit Website
+							<i data-lucide="arrow-up-right"></i>
+						</a>
+					</div>
+				</article>
+			</div>
+		</div>
+	</div>
+	<script src="assets/js/eServices.js" defer></script>
+	<script>
+		async function loadSharedLayout() {
+			const sidebarContainer = document.getElementById("sidebar-container");
+			const headerContainer = document.getElementById("header-container");
+			try {
+				const [sidebarResponse, headerResponse] = await Promise.all([
+					fetch("sidebar.html"),
+					fetch("header.html")
+				]);
+				if (!sidebarResponse.ok || !headerResponse.ok) {
+					throw new Error("Unable to load sidebar.html or header.html.");
+				}
+				sidebarContainer.innerHTML = await sidebarResponse.text();
+				headerContainer.innerHTML = await headerResponse.text();
+				const pageTitle = document.body.dataset.pageTitle || "E-Services";
+				const headerTitle = document.getElementById("pageTitle");
+				if (headerTitle) {
+					headerTitle.textContent = pageTitle;
+				}
+				const currentPage = window.location.pathname.split("/").pop().toLowerCase();
+				document.querySelectorAll(".sidebar [data-page]").forEach(link => {
+					link.classList.toggle("active", link.dataset.page.toLowerCase() === currentPage);
+				});
+				document.querySelectorAll(".sidebar .menu-title").forEach(button => {
+					const menuGroup = button.closest(".menu-group");
+					const submenu = menuGroup?.querySelector(".submenu");
+					if (submenu?.querySelector(".active")) {
+						menuGroup.classList.add("open");
+						button.classList.add("active");
+						button.setAttribute("aria-expanded", "true");
+					}
+					button.addEventListener("click", () => {
+						menuGroup.classList.toggle("open");
+						button.setAttribute("aria-expanded", menuGroup.classList.contains("open") ? "true" : "false");
+					});
+				});
+				if (window.lucide) {
+					window.lucide.createIcons();
+				}
+			} catch (error) {
+				console.error("Error loading shared layout:", error);
+				sidebarContainer.innerHTML = "<p>Unable to load sidebar. Check that sidebar.html exists in the same folder.</p>";
+				headerContainer.innerHTML = "<p>Unable to load header. Check that header.html exists in the same folder.</p>";
+			}
+		}
+		loadSharedLayout();
+	</script>
+</body>
+</html>
